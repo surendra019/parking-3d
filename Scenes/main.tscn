@@ -1,0 +1,251 @@
+[gd_scene load_steps=20 format=3 uid="uid://tlc6sa1if42f"]
+
+[ext_resource type="Texture2D" uid="uid://ccbluyacyx6en" path="res://Assets/Environment/Textures/cobblestone_05_1k/textures/cobblestone_05_diff_1k.jpg" id="1_av71x"]
+[ext_resource type="Script" path="res://Scripts/main.gd" id="1_y2fnw"]
+[ext_resource type="Texture2D" uid="uid://b4dphpmb5mymd" path="res://Assets/Environment/HDRIs/autumn_field_puresky_2k.hdr" id="2_7vkif"]
+[ext_resource type="Texture2D" uid="uid://d3prbgrxenewq" path="res://Assets/Environment/Textures/cobblestone_05_1k/textures/cobblestone_05_rough_1k.exr" id="2_jojuf"]
+[ext_resource type="PackedScene" uid="uid://bnrpbv0qg4oa4" path="res://Scenes/Components/parking_zone.tscn" id="4_mvv22"]
+[ext_resource type="PackedScene" uid="uid://cd74lkyklpebq" path="res://Scenes/Cars/lamborgini.tscn" id="5_go0oq"]
+[ext_resource type="Script" path="res://Scripts/Components/gui.gd" id="7_52gnq"]
+[ext_resource type="Shader" path="res://Shaders/blur.gdshader" id="8_yk3cc"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_2q4gm"]
+panorama = ExtResource("2_7vkif")
+
+[sub_resource type="Sky" id="Sky_7q5n7"]
+sky_material = SubResource("PanoramaSkyMaterial_2q4gm")
+
+[sub_resource type="Environment" id="Environment_qtqoj"]
+background_mode = 2
+sky = SubResource("Sky_7q5n7")
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_wrn5o"]
+albedo_texture = ExtResource("1_av71x")
+normal_enabled = true
+normal_texture = ExtResource("2_jojuf")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_a1v0l"]
+material = SubResource("ORMMaterial3D_wrn5o")
+size = Vector3(500, 1, 500)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sy8dx"]
+size = Vector3(500, 1, 500)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hwwm8"]
+shader = ExtResource("8_yk3cc")
+shader_parameter/lod = 0.805
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l7vbb"]
+bg_color = Color(0.141176, 0.141176, 0.141176, 0.501961)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c5ujr"]
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_x87hd"]
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_ky810"]
+font_size = 80
+
+[node name="Main" type="Node3D" groups=["main"]]
+script = ExtResource("1_y2fnw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.693767, 0.7202, 0, -0.7202, 0.693767, -30.7182, 21.8344, -0.232243)
+light_energy = 2.5
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_qtqoj")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_a1v0l")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_sy8dx")
+
+[node name="ParkingZone" parent="." instance=ExtResource("4_mvv22")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5937, 0, -20.4331)
+
+[node name="lambo" parent="." instance=ExtResource("5_go0oq")]
+transform = Transform3D(-0.995824, 0, -0.0912931, 0, 1, 0, 0.0912931, 0, -0.995824, -32.7389, 1.96737, 31.3781)
+
+[node name="GUI" type="CanvasLayer" parent="."]
+script = ExtResource("7_52gnq")
+
+[node name="UI" type="Control" parent="GUI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="GUI/UI"]
+material = SubResource("ShaderMaterial_hwwm8")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StartGamePanel" type="Panel" parent="GUI/UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -132.0
+offset_top = -83.0
+offset_right = 132.0
+offset_bottom = 83.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l7vbb")
+
+[node name="StartBtn" type="Button" parent="GUI/UI/StartGamePanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -63.0
+offset_top = -33.0
+offset_right = 63.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_c5ujr")
+text = "Start"
+
+[node name="Label" type="Label" parent="GUI/UI/StartGamePanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -132.0
+offset_top = -100.0
+offset_right = 132.0
+offset_bottom = -42.0
+grow_horizontal = 2
+text = "Level 1"
+label_settings = SubResource("LabelSettings_x87hd")
+horizontal_alignment = 1
+
+[node name="GameOverPanel" type="Panel" parent="GUI/UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -132.0
+offset_top = -83.0
+offset_right = 132.0
+offset_bottom = 83.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l7vbb")
+
+[node name="RetryBtn" type="Button" parent="GUI/UI/GameOverPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -63.0
+offset_top = -33.0
+offset_right = 63.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_c5ujr")
+text = "Retry"
+
+[node name="Label" type="Label" parent="GUI/UI/GameOverPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -132.0
+offset_top = -100.0
+offset_right = 132.0
+offset_bottom = -42.0
+grow_horizontal = 2
+text = "Level 1"
+label_settings = SubResource("LabelSettings_x87hd")
+horizontal_alignment = 1
+
+[node name="NextLevelPanel" type="Panel" parent="GUI/UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -132.0
+offset_top = -83.0
+offset_right = 132.0
+offset_bottom = 83.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_l7vbb")
+
+[node name="NextBtn" type="Button" parent="GUI/UI/NextLevelPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -63.0
+offset_top = -33.0
+offset_right = 63.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 25
+theme_override_styles/normal = SubResource("StyleBoxFlat_c5ujr")
+text = "Next"
+
+[node name="ParkingTimer" type="Label" parent="GUI/UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -34.5
+offset_right = 20.0
+offset_bottom = 34.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "3"
+label_settings = SubResource("LabelSettings_ky810")
+
+[node name="Timer" type="Timer" parent="GUI/UI/ParkingTimer"]
+wait_time = 3.0
+one_shot = true
+
+[connection signal="pressed" from="GUI/UI/StartGamePanel/StartBtn" to="GUI" method="_on_start_btn_pressed"]
+[connection signal="pressed" from="GUI/UI/GameOverPanel/RetryBtn" to="GUI" method="_on_retry_btn_pressed"]
+[connection signal="pressed" from="GUI/UI/NextLevelPanel/NextBtn" to="." method="_on_next_btn_pressed"]
+[connection signal="timeout" from="GUI/UI/ParkingTimer/Timer" to="GUI" method="_on_timer_timeout"]
